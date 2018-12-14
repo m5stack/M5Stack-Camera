@@ -1,5 +1,4 @@
-# M5Stack Camera with param base in [espressif/esp32-camera](https://github.com/espressif/esp32-camera.git)
-
+# ESP32 Camera Driver
 
 ## General Information
 
@@ -15,7 +14,8 @@ This repository hosts ESP32 compatible driver for OV2640 image sensors. Addition
 ## Installation Instructions
 
 - Clone or download and extract the repository to the components folder of your ESP-IDF project
-- Make 
+- Enable PSRAM in `menuconfig`
+- Include `esp_camera.h` in your code
 
 ## Examples
 
