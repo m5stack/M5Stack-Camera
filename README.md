@@ -5,6 +5,23 @@
 
 This repository hosts ESP32 compatible driver for OV2640 image sensors. Additionally it provides a few tools, which allow converting the captured frame data to the more common BMP and JPEG formats.
 
+## Note
+
+- We have two versions of the psram camera. If you are using the B model, you need to change it.
+
+```c
+// master branch
+#define CAM_PIN_SIOD    22
+#define CAM_PIN_VSYNC   25
+
+// uart branch
+//uart_set_pin(UART_NUM_1, 13, 12, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+#define CAM_PIN_SIOD    22
+#define CAM_PIN_VSYNC   25
+uart_set_pin(UART_NUM_1, 13, 4, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+```
+
+![img](cam.jpg)
 ## Important to Remember
 
 - Except when using CIF or lower resolution with JPEG, the driver requires PSRAM to be installed and activated.
