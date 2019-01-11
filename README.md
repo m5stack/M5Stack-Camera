@@ -11,7 +11,7 @@ This repository hosts ESP32 compatible driver for OV2640 image sensors. Addition
 
 - If you are using the B model, you need to make the following changes.
 
-*The difference between `ESP32CAM` `M5Camera(A model)` `M5Camera(A model)`: https://github.com/m5stack/M5-Schematic/blob/master/Units/m5camera/hardware_diff_with_ESP32CAM_M5Camera.md*
+*The difference between `ESP32CAM` `M5Camera(A model)` `M5Camera(B model)`: https://github.com/m5stack/M5-Schematic/blob/master/Units/m5camera/hardware_diff_with_ESP32CAM_M5Camera.md*
 
 ```c
 /*
