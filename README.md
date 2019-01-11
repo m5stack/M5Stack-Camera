@@ -7,21 +7,28 @@ This repository hosts ESP32 compatible driver for OV2640 image sensors. Addition
 
 ## Note
 
-- We have two versions of the psram camera. If you are using the B model, you need to change it.
+- We have two versions of the psram camera(A model and B model) as the following figure shown.
+
+- If you are using the B model, you need to make the following changes.
+
+*The difference between `ESP32CAM` `M5Camera(A model)` `M5Camera(A model)`: https://github.com/m5stack/M5-Schematic/blob/master/Units/m5camera/hardware_diff_with_ESP32CAM_M5Camera.md*
 
 ```c
+/*
+    main.c for B model
+*/
 // master branch
 #define CAM_PIN_SIOD    22
 #define CAM_PIN_VSYNC   25
 
 // uart branch
-//uart_set_pin(UART_NUM_1, 13, 12, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 #define CAM_PIN_SIOD    22
 #define CAM_PIN_VSYNC   25
 uart_set_pin(UART_NUM_1, 13, 4, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 ```
 
 ![img](cam.jpg)
+
 ## Important to Remember
 
 - Except when using CIF or lower resolution with JPEG, the driver requires PSRAM to be installed and activated.
@@ -32,7 +39,7 @@ uart_set_pin(UART_NUM_1, 13, 4, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 ## Installation Instructions
 
 - Clone or download and extract the repository to the components folder of your ESP-IDF project
-- Make 
+- Make
 
 ## Examples
 
@@ -116,7 +123,7 @@ esp_err_t camera_capture(){
     }
     //replace this with your own function
     process_image(fb->width, fb->height, fb->format, fb->buf, fb->len);
-  
+
     //return the frame buffer back to the driver for reuse
     esp_camera_fb_return(fb);
     return ESP_OK;
