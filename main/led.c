@@ -12,7 +12,7 @@
 #include "driver/ledc.h"
 #include "esp_err.h"
 
-#define CAMERA_LED_GPIO 14
+#define CAMERA_LED_GPIO 16
 
 void led_brightness(int duty) {
 
