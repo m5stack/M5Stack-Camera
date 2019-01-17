@@ -6,28 +6,7 @@
 This repository hosts ESP32 compatible driver for OV2640 image sensors. Additionally it provides a few tools, which allow converting the captured frame data to the more common BMP and JPEG formats.
 
 ## Note
-
-- We have two versions of the psram camera(A model and B model) as the following figure shown.
-
-- If you are using the B model, you need to make the following changes.
-
-*The difference between `ESP32CAM` `M5Camera(A model)` `M5Camera(B model)`: https://github.com/m5stack/M5-Schematic/blob/master/Units/m5camera/hardware_diff_with_ESP32CAM_M5Camera.md*
-
-```c
-/*
-    main.c for B model
-*/
-// master branch
-#define CAM_PIN_SIOD    22
-#define CAM_PIN_VSYNC   25
-
-// uart branch
-#define CAM_PIN_SIOD    22
-#define CAM_PIN_VSYNC   25
-uart_set_pin(UART_NUM_1, 13, 4, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-```
-
-![img](cam.jpg)
+- This branch is for versions without psram (without shell)
 
 ## Important to Remember
 
