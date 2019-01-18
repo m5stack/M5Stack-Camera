@@ -40,7 +40,7 @@ static const char* TAG = "camera";
 
 #define CAM_USE_WIFI
 
-#define ESP_WIFI_SSID "m5stack-cam"
+#define ESP_WIFI_SSID "M5Psram_Cam"
 #define ESP_WIFI_PASS ""
 #define MAX_STA_CONN  1
 
@@ -52,7 +52,7 @@ static const char* _STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %
 static EventGroupHandle_t s_wifi_event_group;
 static ip4_addr_t s_ip_addr;
 const int CONNECTED_BIT = BIT0;
-
+extern void led_brightness(int duty);
 static camera_config_t camera_config = {
     .pin_reset = CAM_PIN_RESET,
     .pin_xclk = CAM_PIN_XCLK,
@@ -77,10 +77,10 @@ static camera_config_t camera_config = {
     .ledc_channel = LEDC_CHANNEL_0,
 
     .pixel_format = PIXFORMAT_JPEG,//YUV422,GRAYSCALE,RGB565,JPEG
-    .frame_size = FRAMESIZE_QVGA,//QQVGA-UXGA Do not use sizes above QVGA when not JPEG
+    .frame_size = FRAMESIZE_SVGA,//QQVGA-UXGA Do not use sizes above QVGA when not JPEG
 
-    .jpeg_quality = 2, //0-63 lower number means higher quality
-    .fb_count = 3 //if more than one, i2s runs in continuous mode. Use only with JPEG
+    .jpeg_quality = 15, //0-63 lower number means higher quality
+    .fb_count = 4 //if more than one, i2s runs in continuous mode. Use only with JPEG
 };
 
 static void wifi_init_softap();
@@ -99,6 +99,11 @@ void app_main()
     err = esp_camera_init(&camera_config);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Camera Init Failed");
+        for(;;) {
+            vTaskDelay(10);
+        }
+    } else {
+        led_brightness(20);
     }
     
     wifi_init_softap();
