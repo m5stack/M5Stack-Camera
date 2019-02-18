@@ -20,7 +20,7 @@
 #include "esp32-hal-log.h"
 #else
 #include "esp_log.h"
-//static const char* TAG = "ov7725";
+static const char* TAG = "ov7725";
 #endif
 
 
@@ -305,6 +305,7 @@ int ov7725_init(sensor_t *sensor)
     sensor->id.PID = SCCB_Read(sensor->slv_addr, REG_PID);
     sensor->id.VER = SCCB_Read(sensor->slv_addr, REG_VER);
     
+    ESP_LOGD(TAG, "OV7725 Attached");
 
     return 0;
 }

@@ -61,11 +61,6 @@ typedef enum {
 static const char* TAG = "camera";
 #endif
 
-#ifdef ESP_LOGD
-#undef ESP_LOGD
-#define ESP_LOGD ESP_LOGI
-#endif
-
 typedef void (*dma_filter_t)(const dma_elem_t* src, lldesc_t* dma_desc, uint8_t* dst);
 
 typedef struct camera_fb_s {
@@ -224,9 +219,7 @@ static esp_err_t camera_fb_init(size_t count)
         }
         memset(_fb2, 0, sizeof(camera_fb_int_t));
         _fb2->size = s_state->fb_size;
-        if(s_state->config.pixel_format == PIXFORMAT_JPEG) {
-            _fb2->buf = (uint8_t*) calloc(_fb2->size, 1);
-        }
+        _fb2->buf = (uint8_t*) calloc(_fb2->size, 1);
         if(!_fb2->buf) {
             ESP_LOGI(TAG, "Allocating %d KB frame buffer in PSRAM", s_state->fb_size/1024);
             _fb2->buf = (uint8_t*) heap_caps_calloc(_fb2->size, 1, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
@@ -845,6 +838,20 @@ esp_err_t camera_probe(const camera_config_t* config, camera_model_t* out_camera
 
     ESP_LOGD(TAG, "Initializing SSCB");
     SCCB_Init(config->pin_sscb_sda, config->pin_sscb_scl);
+	
+    if(config->pin_pwdn >= 0) {
+        ESP_LOGD(TAG, "Resetting camera by power down line");
+        gpio_config_t conf = { 0 };
+        conf.pin_bit_mask = 1LL << config->pin_pwdn;
+        conf.mode = GPIO_MODE_OUTPUT;
+        gpio_config(&conf);
+
+        // carefull, logic is inverted compared to reset pin
+        gpio_set_level(config->pin_pwdn, 1);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+        gpio_set_level(config->pin_pwdn, 0);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
 
     if(config->pin_reset >= 0) {
         ESP_LOGD(TAG, "Resetting camera");
@@ -875,6 +882,7 @@ esp_err_t camera_probe(const camera_config_t* config, camera_model_t* out_camera
         return ESP_ERR_CAMERA_NOT_DETECTED;
     }
     s_state->sensor.slv_addr = slv_addr;
+    s_state->sensor.xclk_freq_hz = config->xclk_freq_hz;
 
     //s_state->sensor.slv_addr = 0x30;
     ESP_LOGD(TAG, "Detected camera at address=0x%02x", s_state->sensor.slv_addr);

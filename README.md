@@ -18,8 +18,7 @@ This repository hosts ESP32 compatible driver for OV2640 image sensors. Addition
     main.c for B model
 */
 // master branch
-#define CAM_PIN_SIOD    22
-#define CAM_PIN_VSYNC   25
+#define M5_CAM_KIND 2 // 1 --> A model, 2 --> B model
 
 // uart branch
 #define CAM_PIN_SIOD    22
