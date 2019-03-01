@@ -17,7 +17,7 @@
 
 static const char* TAG = "camera";
 
-#define M5_CAM_KIND 1 // 1 --> A model, 2 --> B model
+#define M5_CAM_KIND 2 // 1 --> A model, 2 --> B model
 // #define FISH_EYE_CAM  // fish eye need flip image
 #define CAM_USE_WIFI
 
