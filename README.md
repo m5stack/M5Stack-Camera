@@ -1,32 +1,43 @@
-# M5Stack Camera with psram base in [esp32-camera](https://github.com/espressif/esp32-camera.git)
+# [M5Camera (B Model)](https://docs.m5stack.com/#/zh_CN/unit/m5camera) / M5CameraX Firmware
 
+## Firmware Description
 
-## General Information
-
-This repository hosts ESP32 compatible driver for OV2640 image sensors. Additionally it provides a few tools, which allow converting the captured frame data to the more common BMP and JPEG formats.
+This repository based in [esp32-camera](https://github.com/espressif/esp32-camera.git) is the firmware for [M5Camera (B Model)](https://docs.m5stack.com/#/zh_CN/unit/m5camera) / M5CameraX. Additionally it provides a few tools, which allow converting the captured frame data to the more common BMP and JPEG formats.
 
 ## Note
 
-- We have two versions of the psram camera(A model and B model) as the following figure shown.
+Now, M5Stack has four types of camera units, there are respectively [ESP32CAM](https://docs.m5stack.com/#/en/unit/esp32cam), [M5Camera (A Model)](https://docs.m5stack.com/#/en/unit/m5camera), [M5Camera (B Model)](https://docs.m5stack.com/#/en/unit/m5camera), M5CameraX, [M5CameraF](https://docs.m5stack.com/#/en/unit/m5camera_f).
 
-- This repository is A model firmware. If you are using the B model, you need to make the following changes.
+The main differences between these cameras are **memory**, **interface**, **lens**, **optional hardware** and **camera shell**。
 
-*The difference between `ESP32CAM` `M5Camera(A model)` `M5Camera(B model)`: https://github.com/m5stack/M5-Schematic/blob/master/Units/m5camera/hardware_diff_with_ESP32CAM_M5Camera.md*
+**Different branches correspond to different versions of hardware:**
 
-```c
-/*
-    main.c for B model
-*/
-// master branch
-#define M5_CAM_KIND 2 // 1 --> A model, 2 --> B model
+- [master](https://github.com/m5stack/m5stack-cam-psram/tree/master) -> M5Camera (B Model) / M5CameraX
 
-// uart branch
-#define CAM_PIN_SIOD    22
-#define CAM_PIN_VSYNC   25
-uart_set_pin(UART_NUM_1, 13, 4, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-```
+- [ModeA](https://github.com/m5stack/m5stack-cam-psram/tree/ModeA) -> M5Camera (A Model)
 
-![img](cam.jpg)
+- [NoPsram](https://github.com/m5stack/m5stack-cam-psram/tree/NoPsram) -> ESP32CAM
+
+- [FishEye](https://github.com/m5stack/m5stack-cam-psram/tree/FishEye
+) -> M5CameraF
+
+### Comparison of different versions of cameras
+
+The picture below is their comparison table. (<mark>Note:</mark> Because the interface has many different pins, so I have made a separate table to compare.)
+
+- If you want to **view** the detailed defference with them, please click [here](https://shimo.im/sheets/gP96C8YTdyjGgKQC).
+
+- If you want to **download** the detailed defference with them, please click [here](https://github.com/m5stack/M5-Schematic/blob/master/Units/m5camera/M5%20Camera%20Detailed%20Comparison.xlsx).
+
+<img src="https://m5stack.oss-cn-shenzhen.aliyuncs.com/image/m5-docs_table/camera_comparison/camera_main_comparison_en.png">
+
+### Interface Comparison
+
+<img src="https://m5stack.oss-cn-shenzhen.aliyuncs.com/image/m5-docs_table/camera_comparison/CameraPinComparison_en.png">
+
+**The picture of M5Camera A model and B model**
+
+![Image text](cam.jpg)
 
 ## Important to Remember
 
@@ -38,7 +49,7 @@ uart_set_pin(UART_NUM_1, 13, 4, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 ## Installation Instructions
 
 - Clone or download and extract the repository to the components folder of your ESP-IDF project
-- Make
+- `Make`
 
 ## API
 
@@ -148,7 +159,7 @@ esp_err_t camera_capture(){
     }
     //replace this with your own function
     process_image(fb->width, fb->height, fb->format, fb->buf, fb->len);
-  
+
     //return the frame buffer back to the driver for reuse
     esp_camera_fb_return(fb);
     return ESP_OK;
