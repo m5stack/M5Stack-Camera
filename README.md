@@ -39,6 +39,12 @@ The picture below is their comparison table. (<mark>Note:</mark> Because the int
 
 <img src="https://m5stack.oss-cn-shenzhen.aliyuncs.com/image/m5-docs_table/camera_comparison/CameraPinComparison_en.png">
 
+#### Interface Difference
+
+The following table shows interface difference between those camera boads based on the `Interface Comparison` table.
+
+<img src="https://m5stack.oss-cn-shenzhen.aliyuncs.com/image/m5-docs_table/camera_comparison/CameraPinDifference_en.png">
+
 ## Important to Remember
 
 - Except when using CIF or lower resolution with JPEG, the driver requires PSRAM to be installed and activated.
