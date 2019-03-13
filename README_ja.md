@@ -1,4 +1,4 @@
-# [M5Camera (B Model)](https://docs.m5stack.com/#/zh_CN/unit/m5camera) / M5CameraX Firmware
+# [M5Camera (B Model)](https://docs.m5stack.com/#/zh_CN/unit/m5camera) / M5CameraX ファームウェア
 
 [English](https://github.com/m5stack/m5stack-cam-psram/blob/master/README.md) | [中文](https://github.com/m5stack/m5stack-cam-psram/blob/master/README_zh_CN.md) | 日本語
 
@@ -32,7 +32,7 @@
 
 <img src="https://m5stack.oss-cn-shenzhen.aliyuncs.com/image/m5-docs_table/camera_comparison/camera_main_comparison_en.png">
 
-####  Model A と Model B
+####  A Model と B Model
 
 <img src="https://m5stack.oss-cn-shenzhen.aliyuncs.com/image/m5-docs_table/camera_comparison/diff_A_B.png">
 
