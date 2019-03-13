@@ -8,7 +8,7 @@
 
 ## 注意
 
-现在，M5Stack有四种类型的摄像机单元，分别有[ESP32CAM](https://docs.m5stack.com/#/en/unit/esp32cam)，[M5Camera (A Model)](https://docs.m5stack.com/#/en/unit/m5camera)，[M5Camera (B Model)](https://docs.m5stack.com/#/en/unit/m5camera)，M5CameraX，[M5CameraF](https://docs.m5stack.com/#/en/unit/m5camera_f)。
+现在，M5Stack有四种类型的摄像机单元，分别有[ESP32CAM](https://docs.m5stack.com/#/zh_CN/unit/esp32cam)，[M5Camera (A Model)](https://docs.m5stack.com/#/zh_CN/unit/m5camera)，[M5Camera (B Model)](https://docs.m5stack.com/#/zh_CN/unit/m5camera)，M5CameraX，[M5CameraF](https://docs.m5stack.com/#/zh_CN/unit/m5camera_f)。
 
 这些相机之间的主要区别是**内存**，**接口**，**镜头**，**可选硬件**和**相机外壳**。
 

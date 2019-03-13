@@ -4,11 +4,11 @@
 
 ## ファームウェア概要
 
-[esp32-camera](https://github.com/espressif/esp32-camera.git)ベースの[M5Camera (B Model)](https://docs.m5stack.com/#/zh_CN/unit/m5camera) と `M5CameraX`向けファームウェアリポジトリです。またそれ以外に、キャプチャしたフレームデータを、`BMP`や`JPEG`フォーマットに変換する為のツールを含みます。
+[esp32-camera](https://github.com/espressif/esp32-camera.git)ベースの[M5Camera (B Model)](https://docs.m5stack.com/#/ja/unit/m5camera) と `M5CameraX`向けファームウェアリポジトリです。またそれ以外に、キャプチャしたフレームデータを、`BMP`や`JPEG`フォーマットに変換する為のツールを含みます。
 
 ## ノート
 
-現在、M5Stack向けには、4タイプ５種類のカメラユニットが存在します。 それぞれ [ESP32CAM](https://docs.m5stack.com/#/en/unit/esp32cam)、[M5Camera (A Model)](https://docs.m5stack.com/#/en/unit/m5camera)、[M5Camera (B Model)](https://docs.m5stack.com/#/en/unit/m5camera)、M5CameraX、[M5CameraF](https://docs.m5stack.com/#/en/unit/m5camera_f)です。
+現在、M5Stack向けには、4タイプ５種類のカメラユニットが存在します。 それぞれ [ESP32CAM](https://docs.m5stack.com/#/ja/unit/esp32cam)、[M5Camera (A Model)](https://docs.m5stack.com/#/ja/unit/m5camera)、[M5Camera (B Model)](https://docs.m5stack.com/#/ja/unit/m5camera)、M5CameraX、[M5CameraF](https://docs.m5stack.com/#/ja/unit/m5camera_f)です。
 
 それぞれのカメラユニットの主な仕様の違いは **メモリ**, **インターフェース**, **レンズ**, **オプションのハードウェア**、そして**ケース**です。
 

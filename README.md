@@ -4,7 +4,7 @@ English | [中文](https://github.com/m5stack/m5stack-cam-psram/blob/master/READ
 
 ## Firmware Description
 
-This repository based in [esp32-camera](https://github.com/espressif/esp32-camera.git) is the firmware for [M5Camera (B Model)](https://docs.m5stack.com/#/zh_CN/unit/m5camera) / M5CameraX. Additionally it provides a few tools, which allow converting the captured frame data to the more common BMP and JPEG formats.
+This repository based in [esp32-camera](https://github.com/espressif/esp32-camera.git) is the firmware for [M5Camera (B Model)](https://docs.m5stack.com/#/en/unit/m5camera) / M5CameraX. Additionally it provides a few tools, which allow converting the captured frame data to the more common BMP and JPEG formats.
 
 ## Note
 
