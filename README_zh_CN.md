@@ -14,7 +14,7 @@
 
 **不同的文件夹对应于不同的功能:**
 
-$\color{red}{注意：mpu6050不支持摄像头ESP32CAM，M5Camera (A Model),其余功能支持所有型号摄像头。使用时,需要在idf 配置文件中选择摄像头型号。}$
+注意：mpu6050不支持摄像头ESP32CAM，M5Camera (A Model),其余功能支持所有型号摄像头。使用时,需要在idf 配置文件中选择摄像头型号。
 
 - [mpu6050](https://github.com/zhouyangyale/m5stack-cam-psram/tree/master/mpu6050) -> 陀螺仪
 
