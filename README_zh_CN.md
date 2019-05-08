@@ -4,7 +4,7 @@
 
 ## 固件说明
 
-这个基于[esp32-camera](https://github.com/espressif/esp32-camera.git)的存储库是[M5Camera (B Model)](https://docs.m5stack.com/#/zh_CN/unit/m5camera) / M5CameraX的固件。此外，它还提供了一些工具，可以将捕获的帧数据转换为更常见的BMP和JPEG格式。
+这个基于[esp32-camera](https://github.com/espressif/esp32-camera.git)的存储库是[M5Camera](https://docs.m5stack.com/#/zh_CN/unit/m5camera)的固件。此外，它还提供了一些工具，可以将捕获的帧数据转换为更常见的BMP和JPEG格式。
 
 ## 注意
 
@@ -12,15 +12,15 @@
 
 这些相机之间的主要区别是**内存**，**接口**，**镜头**，**可选硬件**和**相机外壳**。
 
-**不同的分支对应于不同版本的硬件:**
+**不同的文件夹对应于不同的功能:**
 
-- [master](https://github.com/m5stack/m5stack-cam-psram/tree/master) -> M5Camera (B Model) / M5CameraX
+- [mpu6050](https://github.com/m5stack/m5stack-cam-psram/tree/master) -> 陀螺仪
 
-- [ModeA](https://github.com/m5stack/m5stack-cam-psram/tree/ModeA) -> M5Camera (A Model)
+- [qr](https://github.com/m5stack/m5stack-cam-psram/tree/ModeA) -> 二维码识别
 
-- [NoPsram](https://github.com/m5stack/m5stack-cam-psram/tree/NoPsram) -> ESP32CAM
+- [uart](https://github.com/m5stack/m5stack-cam-psram/tree/NoPsram) -> 串口发送
 
-- [FishEye](https://github.com/m5stack/m5stack-cam-psram/tree/FishEye) -> M5CameraF
+- [wifi](https://github.com/m5stack/m5stack-cam-psram/tree/FishEye) -> 无线网络
 
 ### 不同版本相机的比较
 
