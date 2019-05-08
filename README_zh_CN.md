@@ -14,13 +14,13 @@
 
 **不同的文件夹对应于不同的功能:**
 
-- [mpu6050](https://github.com/m5stack/m5stack-cam-psram/tree/master) -> 陀螺仪
+- [mpu6050](https://github.com/zhouyangyale/m5stack-cam-psram/tree/master/mpu6050) -> 陀螺仪
 
-- [qr](https://github.com/m5stack/m5stack-cam-psram/tree/ModeA) -> 二维码识别
+- [qr](https://github.com/zhouyangyale/m5stack-cam-psram/tree/master/qr) -> 二维码识别
 
-- [uart](https://github.com/m5stack/m5stack-cam-psram/tree/NoPsram) -> 串口发送
+- [uart](https://github.com/zhouyangyale/m5stack-cam-psram/tree/master/uart) -> 串口发送
 
-- [wifi](https://github.com/m5stack/m5stack-cam-psram/tree/FishEye) -> 无线网络
+- [wifi](https://github.com/zhouyangyale/m5stack-cam-psram/tree/master/wifi) -> 无线网络
 
 ### 不同版本相机的比较
 
