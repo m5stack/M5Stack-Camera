@@ -16,6 +16,20 @@
 
 注意：mpu6050不支持摄像头ESP32CAM，M5Camera (A Model),其余功能支持所有型号摄像头。使用时,需要在idf 配置文件中选择摄像头型号。
 
+第一步:配置摄像头型号
+
+<img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/board.png">
+
+<img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/board_.png">
+
+第二步：打开psram
+
+<img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/spi.png">
+
+<img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/ignore.png">
+
+源码：
+
 - [mpu6050](https://github.com/zhouyangyale/m5stack-cam-psram/tree/master/mpu6050) -> 陀螺仪
 
 - [qr](https://github.com/zhouyangyale/m5stack-cam-psram/tree/master/qr) -> 二维码识别
