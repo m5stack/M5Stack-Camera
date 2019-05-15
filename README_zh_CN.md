@@ -95,7 +95,7 @@ s->set_hmirror(s, 1);
 ...
 ```
 
-Detailed view [sensor.h](components/esp32-camera/driver/include/sensor.h)
+Detailed view [sensor.h](https://github.com/m5stack/m5stack-cam-psram/blob/master/mpu6050/components/esp32-camera/driver/include/sensor.h)
 
 ## Examples
 
