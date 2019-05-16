@@ -11,8 +11,6 @@ config M5_CAMERA_B_BOARD
     bool "M5-Camera B"
 config M5_CAMERA_X_BOARD
     bool "M5-Camera X"
-config M5_CAMERA_F_BOARD
-    bool "M5-Camera F"
 endchoice
 
 endmenu
