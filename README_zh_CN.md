@@ -20,6 +20,8 @@
 
 - [wifi](https://github.com/zhouyangyale/m5stack-cam-psram/tree/master/wifi) -> 通过 WIFI 传输图像的例程
 
+- [face_recognize](https://github.com/zhouyangyale/m5stack-cam-psram/tree/master/face_recognize) -> 人脸识别的例程
+
 **注意，在编译下载代码之前，需要先执行以下操作，配置成对应的板子。**
 
 第一步：搭建好 ESP-IDF 环境之后，在终端 Terminal 中，执行 `make menuconfig`
