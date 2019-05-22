@@ -1,4 +1,4 @@
-# [M5Camera (B Model)](https://docs.m5stack.com/#/zh_CN/unit/m5camera) / M5CameraX Firmware
+# Camera unit description
 
 English | [中文](https://github.com/m5stack/m5stack-cam-psram/blob/master/README_zh_CN.md)
 
