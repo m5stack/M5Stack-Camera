@@ -2,25 +2,53 @@
 
 English | [中文](https://github.com/m5stack/m5stack-cam-psram/blob/master/README_zh_CN.md)
 
-## Firmware Description
-
-This repository based in [esp32-camera](https://github.com/espressif/esp32-camera.git) is the firmware for [M5Camera (B Model)](https://docs.m5stack.com/#/en/unit/m5camera) / M5CameraX. Additionally it provides a few tools, which allow converting the captured frame data to the more common BMP and JPEG formats.
-
 ## Note
 
 Now, M5Stack has four types of camera units, there are respectively [ESP32CAM](https://docs.m5stack.com/#/en/unit/esp32cam), [M5Camera (A Model)](https://docs.m5stack.com/#/en/unit/m5camera), [M5Camera (B Model)](https://docs.m5stack.com/#/en/unit/m5camera), M5CameraX, [M5CameraF](https://docs.m5stack.com/#/en/unit/m5camera_f).
 
+<img src="img/camera_boards.png">
+
 The main differences between these cameras are **memory**, **interface**, **lens**, **optional hardware** and **camera shell**。
 
-**Different branches correspond to different versions of hardware:**
+## Firmware description
 
-- [master](https://github.com/m5stack/m5stack-cam-psram/tree/master) -> M5Camera (B Model) / M5CameraX
+The code for this repository is for these boards, and each folder corresponds to a function.
 
-- [ModeA](https://github.com/m5stack/m5stack-cam-psram/tree/ModeA) -> M5Camera (A Model)
+- [mpu6050](https://github.com/m5stack/m5stack-cam-psram/tree/master/mpu6050) -> Gyro routine after soldering MPU6050 chip
 
-- [NoPsram](https://github.com/m5stack/m5stack-cam-psram/tree/NoPsram) -> ESP32CAM
+- [qr](https://github.com/m5stack/m5stack-cam-psram/tree/master/qr) -> QR code recognition
 
-- [FishEye](https://github.com/m5stack/m5stack-cam-psram/tree/FishEye) -> M5CameraF
+- [uart](https://github.com/m5stack/m5stack-cam-psram/tree/master/uart) -> 与 [M5Core](https://docs.m5stack.com/#/zh_CN/core/basic) Routine for serial communication
+
+- [wifi](https://github.com/m5stack/m5stack-cam-psram/tree/master/wifi) -> Routine for transferring images
+
+- [face_recognize](https://github.com/m5stack/m5stack-cam-psram/tree/master/face_recognize) -> Face recognition routine
+
+**Please note that before compiling the downloaded code, you need to do the following to configure the appropriate board.**
+
+Step 1：build an ESP-IDF development environment
+
+- [https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html)
+
+Step 2：After setting up the ESP-IDF environment, execute `make menuconfig` in the terminal.
+
+Step 3：Configure camera model
+
+<img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/board.png">
+
+<img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/board_.png">
+
+Step 4：Open psram
+
+<img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/spi.png">
+
+<img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/ignore.png">
+
+Step 5：In the terminal Terminal, execute `make` to ensure that the compilation is correct
+
+Step 6：In the terminal Terminal, execute `make flash` to download the program.
+
+Step 7：In the terminal terminal, execute `make monitor` to open the serial port monitoring.
 
 ### Comparison of different versions of cameras
 
