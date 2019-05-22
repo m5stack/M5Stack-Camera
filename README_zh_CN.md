@@ -24,21 +24,29 @@
 
 **注意，在编译下载代码之前，需要先执行以下操作，配置成对应的板子。**
 
-第一步：搭建好 ESP-IDF 环境之后，在终端 Terminal 中，执行 `make menuconfig`
+第一步：搭建 ESP-IDF 开发环境
 
-第二步：配置摄像头型号
+- [https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html)
+
+第二步：搭建好 ESP-IDF 环境之后，在终端 Terminal 中，执行 `make menuconfig`
+
+第三步：配置摄像头型号
 
 <img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/board.png">
 
 <img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/board_.png">
 
-第三步：打开psram
+第四步：打开psram
 
 <img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/spi.png">
 
 <img src="https://github.com/zhouyangyale/m5stack-cam-psram/blob/master/img/ignore.png">
 
-第三步：在终端 Terminal 中，执行 `make`，确保编译无误
+第五步：在终端 Terminal 中，执行 `make`，确保编译无误
+
+第六步：在终端 Terminal 中，执行 `make flash`，下载程序
+
+第七步：在终端 Terminal 中，执行 `make monitor`，打开串口监视
 
 ### 不同版本相机的比较 ( ESP32CAM, M5Camera (A Model), M5Camera (B Model), M5CameraF )
 
@@ -70,7 +78,7 @@
 ## API
 
 ### Get img data
-
+0
 ```c
 camera_fb_t * fb = NULL;
 // will get a img frame
