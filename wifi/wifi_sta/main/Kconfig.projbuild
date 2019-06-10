@@ -1,0 +1,20 @@
+menu "Camera model"
+
+choice CAMERA_BOARD
+    prompt "Camera board"
+    default M5_CAMERA_B_BOARD
+    help
+        Select a Camera board to use with the ESP-IDF
+config ESP32_CAMERA_BOARD
+    bool "ESP32-Camera"
+config M5_CAMERA_A_BOARD
+    bool "M5-Camera A"
+config M5_CAMERA_B_BOARD
+    bool "M5-Camera B"
+config M5_CAMERA_X_BOARD
+    bool "M5-Camera X"
+config M5_CAMERA_F_BOARD
+    bool "M5-Camera F"
+endchoice
+
+endmenu

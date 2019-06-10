@@ -61,21 +61,23 @@ void loop() {
     if(jpeg_data_1.idle == 1) {
       jpeg_data_1.idle = 2;
       M5.lcd.drawJpg(jpeg_data_1.buf, jpeg_data_1.length, 40, 30);
+      memset(jpeg_data_1.buf,0,jpeg_data_1.length);
       jpeg_data_1.idle = 0;
     }
     
     if(jpeg_data_2.idle == 1) {
-      jpeg_data_2.idle = 2;
+      jpeg_data_2.idle = 2;  
       M5.lcd.drawJpg(jpeg_data_2.buf, jpeg_data_2.length, 40, 30);
+      memset(jpeg_data_2.buf,0,jpeg_data_1.length);
       jpeg_data_2.idle = 0;
     }
 
 }
 
-
 static void uart_init() {
     const uart_config_t uart_config = {
         .baud_rate = 921600,
+        //.baud_rate = 115200,
         .data_bits = UART_DATA_8_BITS,
         .parity = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
@@ -88,6 +90,102 @@ static void uart_init() {
     uart_driver_install(UART_NUM_1, RX_BUF_SIZE, 0, 0, NULL, 0);
 }
 
+
+
+static void uart_msg_task(void *pvParameters) {
+  uint32_t data_len = 0;
+  uint32_t length = 0;
+  uint8_t rx_buffer[10];
+  uint8_t buffer_use = 0;
+  while(true) {
+    // delay(1);
+    uart_get_buffered_data_len(UART_NUM_1, &data_len);
+    if(data_len > 0) {
+      switch(uart_rev_state) {
+        case WAIT_FRAME_1:
+          uart_read_bytes(UART_NUM_1, (uint8_t *)&rx_buffer, 1, 10);
+          if(rx_buffer[0] == frame_data_begin[0]) {
+            uart_rev_state = WAIT_FRAME_2; 
+          }
+          else {
+            break ;
+          }
+          
+        case WAIT_FRAME_2:
+          uart_read_bytes(UART_NUM_1, (uint8_t *)&rx_buffer, 1, 10);
+          if(rx_buffer[0] == frame_data_begin[1]){
+            uart_rev_state = WAIT_FRAME_3; 
+          } else {
+            uart_rev_state = WAIT_FRAME_1;
+            break ;
+          }
+
+        case WAIT_FRAME_3:
+          uart_read_bytes(UART_NUM_1, (uint8_t *)&rx_buffer, 1, 10);
+          if(rx_buffer[0] == frame_data_begin[2]){
+            uart_rev_state = GET_NUM; 
+          } else {
+            uart_rev_state = WAIT_FRAME_1;
+            break ;
+          }
+
+        case GET_NUM:
+          uart_read_bytes(UART_NUM_1, (uint8_t *)&rx_buffer, 1, 10);
+          printf("get number cam buf %d\t", rx_buffer[0]);
+          uart_rev_state = GET_LENGTH;
+
+        case GET_LENGTH:
+          uart_read_bytes(UART_NUM_1, (uint8_t *)&rx_buffer, 3, 10);
+          data_len =(uint32_t)(rx_buffer[0] << 16) | (rx_buffer[1] << 8) | rx_buffer[2];
+          printf("data length %d\r\n", data_len);
+
+        case GET_MSG:
+          if(buffer_use == 0) {
+            buffer_use = 1;
+            if(jpeg_data_1.idle == 0) {
+              if(uart_read_bytes(UART_NUM_1, jpeg_data_1.buf, data_len, 10) == -1) {
+                uart_rev_state = RECV_ERROR;
+                break ;
+              }
+              jpeg_data_1.length = data_len;
+              jpeg_data_1.idle = 1;
+            } else {
+                uart_flush_input(UART_NUM_1);
+            }
+          } else {
+            buffer_use = 0;
+            if(jpeg_data_2.idle == 0) {
+              if(uart_read_bytes(UART_NUM_1, jpeg_data_2.buf, data_len, 10) == -1) {
+                uart_rev_state = RECV_ERROR;
+                break ;
+              }
+              jpeg_data_2.length = data_len;
+              jpeg_data_2.idle = 1;
+            } else {
+                uart_flush_input(UART_NUM_1);
+            }
+          }
+        //  printf("get image %d buffer", buffer_use);
+          uart_rev_state = RECV_FINISH;
+
+        case RECV_FINISH:
+        //   printf("get image finish...\r\n");
+          uart_rev_state = WAIT_FRAME_1;          
+          break ;
+
+        case RECV_ERROR:
+          printf("get image error\r\n");
+          uart_rev_state = WAIT_FRAME_1;
+          break ;
+      }
+    } else {
+      vTaskDelay(pdMS_TO_TICKS(10));
+    }
+
+  }
+  vTaskDelete(NULL);
+}
+/*
 static void uart_msg_task(void *pvParameters) {
   uint32_t data_len = 0;
   uint32_t length = 0;
@@ -177,3 +275,4 @@ static void uart_msg_task(void *pvParameters) {
   }
   vTaskDelete(NULL);
 }
+*/
