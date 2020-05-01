@@ -13,13 +13,12 @@ static const char* TAG = "camera_xclk";
 
 esp_err_t camera_enable_out_clock(camera_config_t* config)
 {
-    periph_module_enable(PERIPH_LEDC_MODULE);
-
     ledc_timer_config_t timer_conf;
     timer_conf.duty_resolution = 2;
     timer_conf.freq_hz = config->xclk_freq_hz;
     timer_conf.speed_mode = LEDC_HIGH_SPEED_MODE;
     timer_conf.timer_num = config->ledc_timer;
+    timer_conf.clk_cfg = LEDC_USE_APB_CLK;
     esp_err_t err = ledc_timer_config(&timer_conf);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "ledc_timer_config failed, rc=%x", err);
@@ -39,6 +38,7 @@ esp_err_t camera_enable_out_clock(camera_config_t* config)
         ESP_LOGE(TAG, "ledc_channel_config failed, rc=%x", err);
         return err;
     }
+    periph_module_enable(PERIPH_LEDC_MODULE);
     return ESP_OK;
 }
 
