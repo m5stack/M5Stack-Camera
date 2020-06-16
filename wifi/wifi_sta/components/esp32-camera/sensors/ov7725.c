@@ -28,8 +28,8 @@ static const uint8_t default_regs[][2] = {
     {COM3,          COM3_SWAP_YUV},
     {COM7,          COM7_RES_QVGA | COM7_FMT_YUV},
 
-    {COM4,          0x01}, /* bypass PLL */
-    {CLKRC,         0xC0}, /* Res/Bypass pre-scalar */
+    {COM4,          0x01 | 0x00}, /* bypass PLL (0x00:off, 0x40:4x, 0x80:6x, 0xC0:8x) */
+    {CLKRC,         0x80 | 0x03}, /* Res/Bypass pre-scalar (0x40:bypass, 0x00-0x3F:prescaler PCLK=XCLK/(prescaler + 1)/2 ) */
 
     // QVGA Window Size
     {HSTART,        0x3F},
@@ -41,9 +41,9 @@ static const uint8_t default_regs[][2] = {
     // Scale down to QVGA Resolution
     {HOUTSIZE,      0x50},
     {VOUTSIZE,      0x78},
+    {EXHCH,         0x00},
 
     {COM12,         0x03},
-    {EXHCH,         0x00},
     {TGT_B,         0x7F},
     {FIXGAIN,       0x09},
     {AWB_CTRL0,     0xE0},
@@ -121,6 +121,51 @@ static const uint8_t default_regs[][2] = {
     {0x00,          0x00},
 };
 
+static int get_reg(sensor_t *sensor, int reg, int mask)
+{
+    int ret = SCCB_Read(sensor->slv_addr, reg & 0xFF);
+    if(ret > 0){
+        ret &= mask;
+    }
+    return ret;
+}
+
+static int set_reg(sensor_t *sensor, int reg, int mask, int value)
+{
+    int ret = 0;
+    ret = SCCB_Read(sensor->slv_addr, reg & 0xFF);
+    if(ret < 0){
+        return ret;
+    }
+    value = (ret & ~mask) | (value & mask);
+    ret = SCCB_Write(sensor->slv_addr, reg & 0xFF, value);
+    return ret;
+}
+
+static int set_reg_bits(sensor_t *sensor, uint8_t reg, uint8_t offset, uint8_t length, uint8_t value)
+{
+    int ret = 0;
+    ret = SCCB_Read(sensor->slv_addr, reg);
+    if(ret < 0){
+        return ret;
+    }
+    uint8_t mask = ((1 << length) - 1) << offset;
+    value = (ret & ~mask) | ((value << offset) & mask);
+    ret = SCCB_Write(sensor->slv_addr, reg & 0xFF, value);
+    return ret;
+}
+
+static int get_reg_bits(sensor_t *sensor, uint8_t reg, uint8_t offset, uint8_t length)
+{
+    int ret = 0;
+    ret = SCCB_Read(sensor->slv_addr, reg);
+    if(ret < 0){
+        return ret;
+    }
+    uint8_t mask = ((1 << length) - 1) << offset;
+    return (ret & mask) >> offset;
+}
+
 
 static int reset(sensor_t *sensor)
 {
@@ -148,6 +193,7 @@ static int reset(sensor_t *sensor)
 static int set_pixformat(sensor_t *sensor, pixformat_t pixformat)
 {
     int ret=0;
+    sensor->pixformat = pixformat;
     // Read register COM7
     uint8_t reg = SCCB_Read(sensor->slv_addr, COM7);
 
@@ -175,19 +221,36 @@ static int set_pixformat(sensor_t *sensor, pixformat_t pixformat)
 static int set_framesize(sensor_t *sensor, framesize_t framesize)
 {
     int ret=0;
-    uint16_t w = resolution[framesize][0];
-    uint16_t h = resolution[framesize][1];
+    if (framesize > FRAMESIZE_VGA) {
+        return -1;
+    }
+    uint16_t w = resolution[framesize].width;
+    uint16_t h = resolution[framesize].height;
+    uint8_t reg = SCCB_Read(sensor->slv_addr, COM7);
+
+    sensor->status.framesize = framesize;
 
     // Write MSBs
     ret |= SCCB_Write(sensor->slv_addr, HOUTSIZE, w>>2);
     ret |= SCCB_Write(sensor->slv_addr, VOUTSIZE, h>>1);
 
+    ret |= SCCB_Write(sensor->slv_addr, HSIZE, w>>2);
+    ret |= SCCB_Write(sensor->slv_addr, VSIZE, h>>1);
+
     // Write LSBs
-    ret |= SCCB_Write(sensor->slv_addr, EXHCH, ((w&0x3) | ((h&0x1) << 2)));
+    ret |= SCCB_Write(sensor->slv_addr, HREF, ((w&0x3) | ((h&0x1) << 2)));
 
     if (framesize < FRAMESIZE_VGA) {
         // Enable auto-scaling/zooming factors
         ret |= SCCB_Write(sensor->slv_addr, DSPAUTO, 0xFF);
+
+        ret |= SCCB_Write(sensor->slv_addr, HSTART, 0x3F);
+        ret |= SCCB_Write(sensor->slv_addr, VSTART, 0x03);
+
+        ret |= SCCB_Write(sensor->slv_addr, COM7, reg | COM7_RES_QVGA);
+
+        ret |= SCCB_Write(sensor->slv_addr, CLKRC, 0x80 | 0x01);
+
     } else {
         // Disable auto-scaling/zooming factors
         ret |= SCCB_Write(sensor->slv_addr, DSPAUTO, 0xF3);
@@ -196,6 +259,13 @@ static int set_framesize(sensor_t *sensor, framesize_t framesize)
         ret |= SCCB_Write(sensor->slv_addr, SCAL0, 0x00);
         ret |= SCCB_Write(sensor->slv_addr, SCAL1, 0x00);
         ret |= SCCB_Write(sensor->slv_addr, SCAL2, 0x00);
+
+        ret |= SCCB_Write(sensor->slv_addr, HSTART, 0x23);
+        ret |= SCCB_Write(sensor->slv_addr, VSTART, 0x07);
+
+        ret |= SCCB_Write(sensor->slv_addr, COM7, reg & ~COM7_RES_QVGA);
+
+        ret |= SCCB_Write(sensor->slv_addr, CLKRC, 0x80 | 0x03);
     }
 
     // Delay
@@ -208,6 +278,7 @@ static int set_colorbar(sensor_t *sensor, int enable)
 {
     int ret=0;
     uint8_t reg;
+    sensor->status.colorbar = enable;
 
     // Read reg COM3
     reg = SCCB_Read(sensor->slv_addr, COM3);
@@ -228,68 +299,214 @@ static int set_colorbar(sensor_t *sensor, int enable)
 
 static int set_whitebal(sensor_t *sensor, int enable)
 {
-    // Read register COM8
-    uint8_t reg = SCCB_Read(sensor->slv_addr, COM8);
-
-    // Set white bal on/off
-    reg = COM8_SET_AWB(reg, enable);
-
-    // Write back register COM8
-    return SCCB_Write(sensor->slv_addr, COM8, reg);
+    if(set_reg_bits(sensor, COM8, 1, 1, enable) >= 0){
+        sensor->status.awb = !!enable;
+    }
+    return sensor->status.awb;
 }
 
 static int set_gain_ctrl(sensor_t *sensor, int enable)
 {
-    // Read register COM8
-    uint8_t reg = SCCB_Read(sensor->slv_addr, COM8);
-
-    // Set white bal on/off
-    reg = COM8_SET_AGC(reg, enable);
-
-    // Write back register COM8
-    return SCCB_Write(sensor->slv_addr, COM8, reg);
+    if(set_reg_bits(sensor, COM8, 2, 1, enable) >= 0){
+        sensor->status.agc = !!enable;
+    }
+    return sensor->status.agc;
 }
 
 static int set_exposure_ctrl(sensor_t *sensor, int enable)
 {
-    // Read register COM8
-    uint8_t reg = SCCB_Read(sensor->slv_addr, COM8);
-
-    // Set white bal on/off
-    reg = COM8_SET_AEC(reg, enable);
-
-    // Write back register COM8
-    return SCCB_Write(sensor->slv_addr, COM8, reg);
+    if(set_reg_bits(sensor, COM8, 0, 1, enable) >= 0){
+        sensor->status.aec = !!enable;
+    }
+    return sensor->status.aec;
 }
 
 static int set_hmirror(sensor_t *sensor, int enable)
 {
-    // Read register COM3
-    uint8_t reg = SCCB_Read(sensor->slv_addr, COM3);
-
-    // Set mirror on/off
-    reg = COM3_SET_MIRROR(reg, enable);
-
-    // Write back register COM3
-    return SCCB_Write(sensor->slv_addr, COM3, reg);
+    if(set_reg_bits(sensor, COM3, 6, 1, enable) >= 0){
+        sensor->status.hmirror = !!enable;
+    }
+    return sensor->status.hmirror;
 }
 
 static int set_vflip(sensor_t *sensor, int enable)
 {
-    // Read register COM3
-    uint8_t reg = SCCB_Read(sensor->slv_addr, COM3);
+    if(set_reg_bits(sensor, COM3, 7, 1, enable) >= 0){
+        sensor->status.vflip = !!enable;
+    }
+    return sensor->status.vflip;
+}
 
-    // Set mirror on/off
-    reg = COM3_SET_FLIP(reg, enable);
+static int set_dcw_dsp(sensor_t *sensor, int enable)
+{
+    int ret = 0;
+    ret = set_reg_bits(sensor, 0x65, 2, 1, !enable);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set dcw to: %d", enable);
+        sensor->status.dcw = enable;
+    }
+    return ret;
+}
 
-    // Write back register COM3
-    return SCCB_Write(sensor->slv_addr, COM3, reg);
+static int set_aec2(sensor_t *sensor, int enable)
+{
+    int ret = 0;
+    ret = set_reg_bits(sensor, COM8, 7, 1, enable);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set aec2 to: %d", enable);
+        sensor->status.aec2 = enable;
+    }
+    return ret;
+}
+
+static int set_bpc_dsp(sensor_t *sensor, int enable)
+{
+    int ret = 0;
+    ret = set_reg_bits(sensor, 0x64, 1, 1, enable);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set bpc to: %d", enable);
+        sensor->status.bpc = enable;
+    }
+    return ret;
+}
+
+static int set_wpc_dsp(sensor_t *sensor, int enable)
+{
+    int ret = 0;
+    ret = set_reg_bits(sensor, 0x64, 0, 1, enable);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set wpc to: %d", enable);
+        sensor->status.wpc = enable;
+    }
+    return ret;
+}
+
+static int set_raw_gma_dsp(sensor_t *sensor, int enable)
+{
+    int ret = 0;
+    ret = set_reg_bits(sensor, 0x64, 2, 1, enable);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set raw_gma to: %d", enable);
+        sensor->status.raw_gma = enable;
+    }
+    return ret;
+}
+
+static int set_lenc_dsp(sensor_t *sensor, int enable)
+{
+    int ret = 0;
+    ret = set_reg_bits(sensor, LC_CTR, 0, 1, enable);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set lenc to: %d", enable);
+        sensor->status.lenc = enable;
+    }
+    return ret;
+}
+
+//real gain
+static int set_agc_gain(sensor_t *sensor, int gain)
+{
+    int ret = 0;
+    ret = set_reg_bits(sensor, COM9, 4, 3, gain % 5);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set gain to: %d", gain);
+        sensor->status.agc_gain = gain;
+    }
+    return ret;
+}
+
+static int set_aec_value(sensor_t *sensor, int value)
+{
+    int ret = 0;
+    ret =  SCCB_Write(sensor->slv_addr, AEC, value & 0xff) | SCCB_Write(sensor->slv_addr, AECH, value >> 8);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set aec_value to: %d", value);
+        sensor->status.aec_value = value;
+    }
+    return ret;
+}
+
+static int set_awb_gain_dsp(sensor_t *sensor, int enable)
+{
+    int ret = 0;
+    ret = set_reg_bits(sensor, 0x63, 7, 1, enable);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set awb_gain to: %d", enable);
+        sensor->status.awb_gain = enable;
+    }
+    return ret;
+}
+
+static int set_brightness(sensor_t *sensor, int level)
+{
+    int ret = 0;
+    ret = SCCB_Write(sensor->slv_addr, 0x9B, level);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set brightness to: %d", level);
+        sensor->status.brightness = level;
+    }
+    return ret;
+}
+
+static int set_contrast(sensor_t *sensor, int level)
+{
+    int ret = 0;
+    ret = SCCB_Write(sensor->slv_addr, 0x9C, level);
+    if (ret == 0) {
+        ESP_LOGD(TAG, "Set contrast to: %d", level);
+        sensor->status.contrast = level;
+    }
+    return ret;
+}
+
+static int init_status(sensor_t *sensor)
+{
+    sensor->status.brightness = SCCB_Read(sensor->slv_addr, 0x9B);
+    sensor->status.contrast = SCCB_Read(sensor->slv_addr, 0x9C);
+    sensor->status.saturation = 0;
+    sensor->status.ae_level = 0;
+    sensor->status.special_effect = get_reg_bits(sensor, 0x64, 5, 1);
+    sensor->status.wb_mode = get_reg_bits(sensor, 0x6B, 7, 1);
+    sensor->status.agc_gain = get_reg_bits(sensor, COM9, 4, 3);
+    sensor->status.aec_value = SCCB_Read(sensor->slv_addr, AEC) | (SCCB_Read(sensor->slv_addr, AECH) << 8);
+    sensor->status.gainceiling = SCCB_Read(sensor->slv_addr, 0x00);
+    sensor->status.awb = get_reg_bits(sensor, COM8, 1, 1);
+    sensor->status.awb_gain = get_reg_bits(sensor, 0x63, 7, 1);
+    sensor->status.aec = get_reg_bits(sensor, COM8, 0, 1);
+    sensor->status.aec2 = get_reg_bits(sensor, COM8, 7, 1);
+    sensor->status.agc = get_reg_bits(sensor, COM8, 2, 1);
+    sensor->status.bpc = get_reg_bits(sensor, 0x64, 1, 1);
+    sensor->status.wpc = get_reg_bits(sensor, 0x64, 0, 1);
+    sensor->status.raw_gma = get_reg_bits(sensor, 0x64, 2, 1);
+    sensor->status.lenc = get_reg_bits(sensor, LC_CTR, 0, 1);
+    sensor->status.hmirror = get_reg_bits(sensor, COM3, 6, 1);
+    sensor->status.vflip = get_reg_bits(sensor, COM3, 7, 1);
+    sensor->status.dcw = get_reg_bits(sensor, 0x65, 2, 1);
+    sensor->status.colorbar = get_reg_bits(sensor, COM3, 0, 1);
+    sensor->status.sharpness = get_reg_bits(sensor, EDGE0, 0, 5);
+    sensor->status.denoise = SCCB_Read(sensor->slv_addr, 0x8E);
+    return 0;
+}
+
+static int set_dummy(sensor_t *sensor, int val){ return -1; }
+static int set_gainceiling_dummy(sensor_t *sensor, gainceiling_t val){ return -1; }
+static int set_res_raw(sensor_t *sensor, int startX, int startY, int endX, int endY, int offsetX, int offsetY, int totalX, int totalY, int outputX, int outputY, bool scale, bool binning){return -1;}
+static int _set_pll(sensor_t *sensor, int bypass, int multiplier, int sys_div, int root_2x, int pre_div, int seld5, int pclk_manual, int pclk_div){return -1;}
+
+esp_err_t xclk_timer_conf(int ledc_timer, int xclk_freq_hz);
+static int set_xclk(sensor_t *sensor, int timer, int xclk)
+{
+    int ret = 0;
+    sensor->xclk_freq_hz = xclk * 1000000U;
+    ret = xclk_timer_conf(timer, sensor->xclk_freq_hz);
+    return ret;
 }
 
 int ov7725_init(sensor_t *sensor)
 {
     // Set function pointers
     sensor->reset = reset;
+    sensor->init_status = init_status;
     sensor->set_pixformat = set_pixformat;
     sensor->set_framesize = set_framesize;
     sensor->set_colorbar = set_colorbar;
@@ -299,6 +516,35 @@ int ov7725_init(sensor_t *sensor)
     sensor->set_hmirror = set_hmirror;
     sensor->set_vflip = set_vflip;
 
+    sensor->set_brightness = set_brightness;
+    sensor->set_contrast = set_contrast;
+    sensor->set_aec2 = set_aec2;
+    sensor->set_aec_value = set_aec_value;
+    sensor->set_awb_gain = set_awb_gain_dsp;
+    sensor->set_agc_gain = set_agc_gain;
+    sensor->set_dcw = set_dcw_dsp;
+    sensor->set_bpc = set_bpc_dsp;
+    sensor->set_wpc = set_wpc_dsp;
+    sensor->set_raw_gma = set_raw_gma_dsp;
+    sensor->set_lenc = set_lenc_dsp;
+
+    //not supported
+    sensor->set_saturation= set_dummy;
+    sensor->set_sharpness = set_dummy;
+    sensor->set_denoise = set_dummy;
+    sensor->set_quality = set_dummy;
+    sensor->set_special_effect = set_dummy;
+    sensor->set_wb_mode = set_dummy;
+    sensor->set_ae_level = set_dummy;
+    sensor->set_gainceiling = set_gainceiling_dummy;
+
+
+    sensor->get_reg = get_reg;
+    sensor->set_reg = set_reg;
+    sensor->set_res_raw = set_res_raw;
+    sensor->set_pll = _set_pll;
+    sensor->set_xclk = set_xclk;
+    
     // Retrieve sensor's signature
     sensor->id.MIDH = SCCB_Read(sensor->slv_addr, REG_MIDH);
     sensor->id.MIDL = SCCB_Read(sensor->slv_addr, REG_MIDL);

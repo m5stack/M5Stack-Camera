@@ -12,15 +12,15 @@
 
 该仓库的代码适于这些板子，每个文件夹对应一种功能。
 
-- [mpu6050](https://github.com/m5stack/m5stack-cam-psram/tree/master/mpu6050) -> 焊接 MPU6050 芯片之后，陀螺仪的例程
+- [mpu6050](https://github.com/m5stack/m5stack-cam-psram/tree/master/mpu6050) -> 焊接 MPU6050 芯片之后，陀螺仪的例程 (idf-3.3)
 
-- [qr](https://github.com/m5stack/m5stack-cam-psram/tree/master/qr) -> 二维码识别的例程
+- [qr](https://github.com/m5stack/m5stack-cam-psram/tree/master/qr) -> 二维码识别的例程 (idf-3.3)
 
-- [uart](https://github.com/m5stack/m5stack-cam-psram/tree/master/uart) -> 与 [M5Core](https://docs.m5stack.com/#/zh_CN/core/basic) 之间进行串口通信的例程
+- [uart](https://github.com/m5stack/m5stack-cam-psram/tree/master/uart) -> 与 [M5Core](https://docs.m5stack.com/#/zh_CN/core/basic) 之间进行串口通信的例程 (idf-3.3)
 
-- [wifi](https://github.com/m5stack/m5stack-cam-psram/tree/master/wifi) -> 通过 WIFI 传输图像的例程
+- [wifi](https://github.com/m5stack/m5stack-cam-psram/tree/master/wifi) -> 通过 WIFI 传输图像的例程 (idf-4.0)
 
-- [face_recognize](https://github.com/m5stack/m5stack-cam-psram/tree/master/face_recognize) -> 人脸识别的例程
+- [face_recognize](https://github.com/m5stack/m5stack-cam-psram/tree/master/face_recognize) -> 人脸识别的例程 (idf-3.3)
 
 **注意，在编译下载代码之前，需要先执行以下操作，配置成对应的板子。**
 

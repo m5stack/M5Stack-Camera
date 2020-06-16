@@ -14,15 +14,15 @@ The main differences between these cameras are **memory**, **interface**, **lens
 
 The code for this repository is for these boards, and each folder corresponds to a function.
 
-- [mpu6050](https://github.com/m5stack/m5stack-cam-psram/tree/master/mpu6050) -> Gyro routine after soldering MPU6050 chip
+- [mpu6050](https://github.com/m5stack/m5stack-cam-psram/tree/master/mpu6050) -> Gyro routine after soldering MPU6050 chip (idf-3.3)
 
-- [qr](https://github.com/m5stack/m5stack-cam-psram/tree/master/qr) -> QR code recognition
+- [qr](https://github.com/m5stack/m5stack-cam-psram/tree/master/qr) -> QR code recognition (idf-3.3)
 
-- [uart](https://github.com/m5stack/m5stack-cam-psram/tree/master/uart) -> 与 [M5Core](https://docs.m5stack.com/#/zh_CN/core/basic) Routine for serial communication
+- [uart](https://github.com/m5stack/m5stack-cam-psram/tree/master/uart) -> 与 [M5Core](https://docs.m5stack.com/#/zh_CN/core/basic) Routine for serial communication (idf-3.3)
 
-- [wifi](https://github.com/m5stack/m5stack-cam-psram/tree/master/wifi) -> Routine for transferring images
+- [wifi](https://github.com/m5stack/m5stack-cam-psram/tree/master/wifi) -> Routine for transferring images (idf-4.0)
 
-- [face_recognize](https://github.com/m5stack/m5stack-cam-psram/tree/master/face_recognize) -> Face recognition routine
+- [face_recognize](https://github.com/m5stack/m5stack-cam-psram/tree/master/face_recognize) -> Face recognition routine (idf-3.3)
 
 **Please note that before compiling the downloaded code, you need to do the following to configure the appropriate board.**
 

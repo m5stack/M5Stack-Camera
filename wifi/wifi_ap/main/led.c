@@ -22,9 +22,12 @@ void led_brightness(int duty) {
     duty = 1024 - duty;
 
     ledc_timer_config_t ledc_timer = {
-        .bit_num = LEDC_TIMER_10_BIT, // resolution of PWM duty
+        .duty_resolution = LEDC_TIMER_10_BIT, // resolution of PWM duty
         .freq_hz = 5000,              // frequency of PWM signal
         .speed_mode = LEDC_HS_MODE,   // timer mode
+#if ESP_IDF_VERSION_MAJOR >= 4
+        .clk_cfg = LEDC_AUTO_CLK,
+#endif
         .timer_num = LEDC_HS_TIMER    // timer index
     };
     // Set configuration of timer0 for high speed channels
